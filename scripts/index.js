@@ -8,12 +8,11 @@ const placesList = document.querySelector('.places__list');// сам элеме�
 function createCardElement(item, removeCardElement) {
     const cardElement = cardTеmplate.querySelector('.places__item').cloneNode(true);
     const cardImage = cardElement.querySelector('.card__image');
-    const cardName = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
     const buttonRemoval = cardElement.querySelector('.card__delete-button');
 
     cardImage.src = item.link;
-    cardName.alt = item.name;
+    cardImage.alt = item.name;
     cardTitle.textContent = item.name;
 
     buttonRemoval.addEventListener('click', function () {
