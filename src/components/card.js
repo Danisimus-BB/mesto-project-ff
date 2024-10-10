@@ -1,6 +1,5 @@
 // @todo: Темплейт карточки
 const cardTеmplate = document.querySelector('#card-template').content; // То, что я буду вставлять в элемент .places_list
-const popupBigImage = document.querySelector('.popup_type_image');
 
 // @todo: Функция создания карточки
 function createCardElement(item, removeCardElement, cardLikeFunction, openCardImage) {
@@ -39,14 +38,4 @@ function cardLikeFunction (button) {
     button.classList.toggle('card__like-button_is-active');
 }
 
-// Функция просмотра изображения в крупном размере
-function openCardImage (cardTitle, cardImage) {
-    popupBigImage.classList.add('popup_is-opened');
-    const image = popupBigImage.querySelector('.popup__image');
-    const text = popupBigImage.querySelector('.popup__caption');
-    image.src = cardImage.src;
-    image.alt = cardImage.alt;
-    text.textContent = cardTitle.textContent;
-}
-
-export {createCardElement, removeCardElement, cardLikeFunction, openCardImage}
+export {createCardElement, removeCardElement, cardLikeFunction};

@@ -1,6 +1,6 @@
 import "./styles/index.css";
 import { initialCards } from "./components/cards.js";
-import {createCardElement, removeCardElement, cardLikeFunction, openCardImage} from "./components/card.js";
+import {createCardElement, removeCardElement, cardLikeFunction} from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 // import { createCardElement, removeCardElement, cardLikeFunction, openCardImage} from "./card.js";
 // import { closeModal, openModal } from "./modal.js";
@@ -24,6 +24,7 @@ const newCardName = popupNewCard.querySelector('.popup__input_type_card-name');
 const newCardUrl = popupNewCard.querySelector('.popup__input_type_url');
 const addCardButton = document.querySelector('.profile__add-button');
 const popupAddCard = document.querySelector('.popup_type_new-card');
+const popupBigImage = document.querySelector('.popup_type_image');
 
 
 
@@ -32,6 +33,15 @@ initialCards.forEach(function(item) {
     const card = createCardElement(item, removeCardElement, cardLikeFunction, openCardImage);
     placesList.append(card);
 });
+// Функция просмотра изображения в крупном размере
+function openCardImage (cardTitle, cardImage) {
+    openModal(popupBigImage);
+    const image = popupBigImage.querySelector('.popup__image');
+    const text = popupBigImage.querySelector('.popup__caption');
+    image.src = cardImage.src;
+    image.alt = cardImage.alt;
+    text.textContent = cardTitle.textContent;
+}
 
 // Функция для открытия попапа "изменение профиля"
 editButton.addEventListener('click', () => {
