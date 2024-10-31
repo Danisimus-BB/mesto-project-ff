@@ -1,4 +1,4 @@
-import { cardDeletePromise, cardLikePromise } from "./promises";
+import { cardDeletePromise, cardLikePromise, fetchResponse, config } from "./promises";
 
 // @todo: Темплейт карточки
 const cardTеmplate = document.querySelector('#card-template').content; // То, что я буду вставлять в элемент .places_list
@@ -40,18 +40,38 @@ function createCardElement(removeCardElement, cardLikeFunction, openCardImage, i
 // @todo: Функция удаления карточки
 function removeCardElement(card, item) { 
     card.remove();
-    cardDeletePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/${item._id}`);
+    cardDeletePromise(`${config.baseUrl}/cards/${item._id}`);
 }
 
 // Функция лайка / снятия лайка
-function cardLikeFunction (button, counter, item) {
-    button.classList.toggle('card__like-button_is-active');
-
-    if (button.classList.contains('card__like-button_is-active')) {
-        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'PUT', counter);
+async function cardLikeFunction (button, counter, item, myId) {
+    const cardsResponse = await fetchResponse(`${config.baseUrl}/cards`);
+    const cardsData = await cardsResponse.json();    
+    
+    const findCard = () => {
+        for (let card of Object.values(cardsData)) {
+            if (card._id === item._id) {
+                return card;
+                }
+            }
+    };
+    const currentCard = findCard();
+    
+    if (currentCard.likes.some(like => like._id === myId)) {        
+        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'DELETE', counter)
+        .then(() => {            
+            button.classList.remove('card__like-button_is-active');
+        }).catch((err) => {
+            console.log(err);
+        });
     } else {
-        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'DELETE', counter);
-    } 
+        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'PUT', counter)
+        .then(() => {
+            button.classList.add('card__like-button_is-active');
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 }
 
 export {createCardElement, removeCardElement, cardLikeFunction};

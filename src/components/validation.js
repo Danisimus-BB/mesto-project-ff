@@ -9,17 +9,17 @@ function validateRegexInput(inputElement) {
     }
 }
 
-const showInputError = (formElement, inputElement, errorMessage) => {
+const showInputError = (formElement, inputElement, errorMessage, inputErrorClass, errorClass) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-    inputElement.classList.add('popup__input_type_error');
+    inputElement.classList.add(inputErrorClass);
     errorElement.textContent = errorMessage;
-    errorElement.classList.add('popup__error-message_active');
+    errorElement.classList.add(errorClass);
 }; // util: Включаем сообщение об ошибке если валидация не прошла.
 
-const hideInputError = (formElement, inputElement) => {
+const hideInputError = (formElement, inputElement, inputErrorClass, errorClass) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-    inputElement.classList.remove('popup__input_type_error');
-    errorElement.classList.remove('popup__error-message_active');
+    inputElement.classList.remove(inputErrorClass);
+    errorElement.classList.remove(errorClass);
     errorElement.textContent = '';
 }; // util: Прячем сообщение об ошибке, если валидация прошла
 
@@ -39,44 +39,49 @@ const toggleButtonState = (inputList, buttonElement) => {
     }
 } // util: Функция переключения кнопки в активный / неактивный режим, при проверке валидности / невалидности
 
-const checkInputValidity = (formElement, inputElement) => {
+const checkInputValidity = (formElement, inputElement, inputErrorClass, errorClass) => {
     if (!inputElement.validity.valid) {
-      showInputError(formElement, inputElement, inputElement.validationMessage);
+      showInputError(formElement, inputElement, inputElement.validationMessage, inputErrorClass, errorClass);
     } else {
-      hideInputError(formElement, inputElement);
+      hideInputError(formElement, inputElement, inputErrorClass, errorClass);
     }
 }; // механика включения / выключения сообщения об ошибке если поле валидно / инвалидно
 
-const setEventListeners = (formElement) => {
-    const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
-    const buttonElement = formElement.querySelector('.popup__button');
+const setEventListeners = (formSelector, inputSelector, submitButtonSelector, inputErrorClass, errorClass) => {
     
+    const formElement = document.querySelector(formSelector);
+    const inputList = Array.from(formElement.querySelectorAll(inputSelector));
+    const buttonElement = formElement.querySelector(submitButtonSelector);
+
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', function () {
             if (inputElement.name !== 'link') {
                 validateRegexInput(inputElement);
             }
-            checkInputValidity(formElement, inputElement);
+            checkInputValidity(formElement, inputElement, inputErrorClass, errorClass);
             toggleButtonState(inputList, buttonElement);
         });
     });
 }; // Для всех инпутов формы запускаем показ / скрытие сообщение об ошибке и переключение кнопки submit
 
-const enableValidation = (form) => {
-    setEventListeners(form);
+const enableValidation = (validationConfig) => {
+    setEventListeners(validationConfig.formSelector, validationConfig.inputSelector, validationConfig.submitButtonSelector, validationConfig.inputErrorClass, validationConfig.errorClass);
+    
+    const form = document.querySelector(validationConfig.formSelector);
     form.addEventListener('submit', function (evt) {
         evt.preventDefault();
     });
+    
 }; // На вход даем объект с данными для отключения работы кнопки submit по умолчанию
 
-const clearValidation = (form) => {   
-    const inputList = Array.from(form.querySelectorAll('.popup__input'));
-    const buttonElement = form.querySelector('.popup__button');
+const clearValidation = (form, validationConfig) => {
+    const inputList = Array.from(form.querySelectorAll(validationConfig.inputSelector));
+    const buttonElement = form.querySelector(validationConfig.submitButtonSelector);
     buttonElement.setAttribute('disabled', '');
     
     inputList.forEach((inputElement) => {
         inputElement.setCustomValidity('');
-        hideInputError(form, inputElement);
+        hideInputError(form, inputElement, validationConfig.inputErrorClass, validationConfig.errorClass);
     });
 }
 
