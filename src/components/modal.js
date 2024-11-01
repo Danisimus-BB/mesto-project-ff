@@ -1,6 +1,5 @@
-const openedPopup = document.querySelector('.popup_is-opened');
-
 function closeModalOnEsc(evt) {
+    const openedPopup = document.querySelector('.popup_is-opened');
     if (evt.key === "Escape") {
         closeModal(openedPopup);
     }
@@ -14,10 +13,13 @@ function openModal(popup) {
 function closeModal(popup) {
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', closeModalOnEsc);
-    const inputs = popup.querySelectorAll('input');
-    for (let input of inputs) {
-        input.value = '';
+
+    if (popup.querySelector('form')) {
+        const inputs = popup.querySelectorAll('input');
+        for (let input of inputs) {
+            input.value = '';
+        }
     }
 }
 
-export { openModal, closeModal };
+export { openModal, closeModal};

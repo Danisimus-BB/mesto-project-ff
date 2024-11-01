@@ -39,8 +39,11 @@ function createCardElement(removeCardElement, cardLikeFunction, openCardImage, i
 
 // @todo: Функция удаления карточки
 function removeCardElement(card, item) { 
-    card.remove();
-    cardDeletePromise(`${config.baseUrl}/cards/${item._id}`);
+    cardDeletePromise(`${config.baseUrl}/cards/${item._id}`)
+    .then((res) => {
+        card.remove();
+        return res;
+    }).catch((err) => console.log(err));
 }
 
 // Функция лайка / снятия лайка
@@ -58,16 +61,18 @@ async function cardLikeFunction (button, counter, item, myId) {
     const currentCard = findCard();
     
     if (currentCard.likes.some(like => like._id === myId)) {        
-        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'DELETE', counter)
-        .then(() => {            
+        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'DELETE')
+        .then((data) => {            
             button.classList.remove('card__like-button_is-active');
+            counter.textContent = data.likes.length;
         }).catch((err) => {
             console.log(err);
         });
     } else {
-        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'PUT', counter)
-        .then(() => {
+        cardLikePromise(`https://nomoreparties.co/v1/wff-cohort-24/cards/likes/${item._id}`, 'PUT')
+        .then((data) => {
             button.classList.add('card__like-button_is-active');
+            counter.textContent = data.likes.length;
         }).catch((err) => {
             console.log(err);
         });

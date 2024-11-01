@@ -30,9 +30,6 @@ const profileEditPromise = (name, about) => {
     }).then(res => {
         return checkResponse(res);
     })
-    .catch((err) => {
-        console.log(err);
-    });
 }
 
 const avatarEditPromise = (avatar) => {
@@ -44,9 +41,7 @@ const avatarEditPromise = (avatar) => {
         })
     }).then(res => {
         return checkResponse(res);
-    }).catch((err) => {
-        console.log(err);
-    });
+    })
 }
 
 function cardAddPromise(name, link) {
@@ -60,9 +55,6 @@ function cardAddPromise(name, link) {
     }).then(res => {
         return checkResponse(res);
     })
-    .catch((err) => {
-        console.log(err);
-    });
 }
 
 function cardDeletePromise(url) {
@@ -72,21 +64,14 @@ function cardDeletePromise(url) {
     }).then(res => {
         return checkResponse(res);
     })
-    .catch((err) => {
-        console.log(err);
-    });
 }
 
-function cardLikePromise(url, method, counter) {
+function cardLikePromise(url, method) {
     return fetch(url, {
         method: method,
         headers: config.headers
     }).then(res => {
         return checkResponse(res);
-    }).then(data => {
-       counter.textContent = data.likes.length;
-    }).catch((err) => {
-        console.log(err);
     });
 }
 
