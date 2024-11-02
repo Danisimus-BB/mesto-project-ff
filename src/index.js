@@ -90,6 +90,7 @@ function openCardImage (cardTitle, cardImage) {
 // Функция для открытия попапа "изменение профиля"
 editButton.addEventListener('click', () => {
     // Заполнение полей текущими значениями
+    formEditName.reset();
     nameInput.value = profileTitle.textContent;
     descriptionInput.value = profileDescription.textContent;
     clearValidation(formEditName, {
@@ -103,6 +104,7 @@ editButton.addEventListener('click', () => {
 
 // Функция для открытия попапа "Изменение аватара"
 profileImage.addEventListener('click', () => {
+    formEditAvatar.reset();
     clearValidation(popupAvatar, {
         inputSelector: '.popup__input',
         submitButtonSelector: '.popup__button',
@@ -114,6 +116,7 @@ profileImage.addEventListener('click', () => {
 
 // Функция для открытия попапа "Добавление карточки"
 addCardButton.addEventListener('click', () => {
+    formAddCard.reset();
     clearValidation(formAddCard, {
         inputSelector: '.popup__input',
         submitButtonSelector: '.popup__button',
@@ -146,9 +149,8 @@ formEditName.addEventListener('submit', (event) => {
     event.preventDefault(); // Предотвратить перезагрузку страницы
     async function fetchData() {
         formEditNameSubmit.textContent = 'Сохранение...';
-    
         try {
-            const response = await profileEditPromise(nameInput.value, descriptionInput.value);            
+            const response = await profileEditPromise(nameInput.value, descriptionInput.value);
         } catch (error) {
             console.error('Ошибка:', error);
         } finally {
@@ -172,9 +174,7 @@ formEditAvatar.addEventListener('submit', (event) => {
     event.preventDefault(); // Предотвратить перезагрузку страницы
     
     async function fetchData() {
-        
         popupAvatarSubmit.textContent = 'Сохранение...';
-    
         try {
             const response = await avatarEditPromise(avatarInput.value);
         } catch (error) {
@@ -207,7 +207,6 @@ formAddCard.addEventListener('submit', (event) => {
         const profileData = await profileResponse.json();
         const myId = profileData._id;
         formAddCardSubmit.textContent = 'Сохранение...';
-
         try {
             await cardAddPromise(...Object.values(newCardData));
         } catch (error) {
@@ -230,5 +229,4 @@ formAddCard.addEventListener('submit', (event) => {
     }).catch((err) => {
         console.log(err);
     });
-
 });
