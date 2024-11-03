@@ -150,7 +150,7 @@ formEditName.addEventListener('submit', (event) => {
     async function fetchData() {
         formEditNameSubmit.textContent = 'Сохранение...';
         try {
-            const response = await profileEditPromise(nameInput.value, descriptionInput.value);
+            await profileEditPromise(nameInput.value, descriptionInput.value);
         } catch (error) {
             console.error('Ошибка:', error);
         } finally {
@@ -203,26 +203,27 @@ formAddCard.addEventListener('submit', (event) => {
     };
 
     async function fetchData() {
-        const profileResponse = await fetchResponse(`${config.baseUrl}/users/me`);
-        const profileData = await profileResponse.json();
-        const myId = profileData._id;
         formAddCardSubmit.textContent = 'Сохранение...';
         try {
+            const profileResponse = await fetchResponse(`${config.baseUrl}/users/me`);
+            const profileData = await profileResponse.json();
+            const myId = profileData._id;
             await cardAddPromise(...Object.values(newCardData));
+            const cardsResponse = await fetchResponse(`${config.baseUrl}/cards`);
+            const cardsData = await cardsResponse.json();
+            return { cardsData, myId };
         } catch (error) {
             console.error('Ошибка:', error);
             formAddCardSubmit.textContent = 'Сохранить';
         } finally {
-            const cardsResponse = await fetchResponse(`${config.baseUrl}/cards`);
-            const cardsData = await cardsResponse.json();
-            const card = createCardElement(removeCardElement, cardLikeFunction, openCardImage, cardsData[0], myId);
-            placesList.prepend(card);
             formAddCardSubmit.textContent = 'Сохранить';
         }
     };
 
     fetchData()
-    .then(() => {
+    .then(({cardsData, myId}) => {
+        const card = createCardElement(removeCardElement, cardLikeFunction, openCardImage, cardsData[0], myId);
+        placesList.prepend(card);
         closeModal(popupAddCard);
         newCardName.value = '';
         newCardUrl.value = '';
